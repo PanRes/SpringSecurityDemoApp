@@ -11,11 +11,21 @@
 <html>
 	<head>
 		<title>Login Page</title>
+		<style rel="stylesheet" type="text/css"
+			   href="${pageContext.request.contextPath}/resources/css/style.css"/>
+
+		<link rel="stylesheet"
+			  href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+
+		<script	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
 	</head>
 	<body>
 		<h3>My custom Login Page</h3>
 		<c:if test="${param.error != null}">
-			<i style="color: red">Sorry! Wrong credentials dufus</i>
+			<i class="failLogin">Sorry! Wrong credentials dufus</i>
 		</c:if>
 		<form:form action="${pageContext.request.contextPath}/authenticateTheUser" method="post">
 			<p>User Name: <input type="text" name="username"></p>
