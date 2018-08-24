@@ -5,12 +5,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = "gr.pr.udemy.spring.security")
-public class DemoAppConfiguration {
+public class DemoAppConfiguration extends WebMvcConfigurationSupport {
 	
 	@Bean
 	public ViewResolver viewResolver() {
@@ -21,5 +23,12 @@ public class DemoAppConfiguration {
 		
 		return viewResolver;
 	}
+	
+	@Override
+	public void addResourceHandlers(final ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+	}
+	
+	
 	
 }

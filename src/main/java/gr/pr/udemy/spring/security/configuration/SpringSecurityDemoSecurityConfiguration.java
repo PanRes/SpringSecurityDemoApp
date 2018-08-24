@@ -27,10 +27,13 @@ public class SpringSecurityDemoSecurityConfiguration extends WebSecurityConfigur
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-				.anyRequest()
-				.authenticated().and().formLogin()
-				.loginPage("/showMyLoginPage")
-				.loginProcessingUrl("/authenticateTheUser")
-				.permitAll();
+				.anyRequest().authenticated()
+				.and()
+				.formLogin()
+					.loginPage("/showMyLoginPage")
+					.loginProcessingUrl("/authenticateTheUser")
+					.permitAll()
+				.and()
+				.logout().permitAll();
 	}
 }
