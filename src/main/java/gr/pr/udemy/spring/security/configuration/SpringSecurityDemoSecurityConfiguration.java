@@ -19,21 +19,26 @@ public class SpringSecurityDemoSecurityConfiguration extends WebSecurityConfigur
 		UserBuilder users = User.withDefaultPasswordEncoder();
 		
 		auth.inMemoryAuthentication()
-				.withUser(users.username("PR").password("test123").roles("OVERLORD"))
-				.withUser(users.username("McCoy").password("test123").roles("PLEB"))
-				.withUser(users.username("Angel").password("test123").roles("CRUSADER"));
+				.withUser(users.username("PR").password("test123").roles("USER","OVERLORD","Awesome"))
+				.withUser(users.username("McCoy").password("test123").roles("USER","PLEB"))
+				.withUser(users.username("Angel").password("test123").roles("USER","CRUSADER","Awesome"));
 	}
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-				.anyRequest().authenticated()
+				.antMatchers("/").permitAll()
+				.antMatchers("/overLords/**").hasRole("OVERLORD")
+				.antMatchers("/plebs/**").hasRole("PLEB")
+				.antMatchers("/castle/**").hasRole("Awesome")
 				.and()
 				.formLogin()
 					.loginPage("/showMyLoginPage")
 					.loginProcessingUrl("/authenticateTheUser")
 					.permitAll()
 				.and()
-				.logout().permitAll();
+				.logout().permitAll()
+				.and()
+				.exceptionHandling().accessDeniedPage("/accessDenied");
 	}
 }
