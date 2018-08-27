@@ -20,7 +20,7 @@
 		<script	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 		<link rel="stylesheet" type="text/css"
-			  href="${pageContext.request.contextPath}/resources/css/style.css"/>
+			  href="${pageContext.request.contextPath}/resources/css/style.css">
 	</head>
 	<body>
 		<h3>My custom Login Page</h3>

@@ -25,10 +25,10 @@
 
 		Welcome to Panagiotis Ressos' Udemy Spring Security Demo
 		<br>
-<%--
-		<form:form method="post"
-		<input type="button" class="btn btn-primary" value="Logout">
---%>
+		<form:form method="post" action="${pageContext.request.contextPath}/logout">
+
+			<input type="submit" class="btn btn-primary" value="Logout">
+		</form:form>
 
 	</body>
 </html>

@@ -28,7 +28,4 @@ public class DemoAppConfiguration extends WebMvcConfigurationSupport {
 	public void addResourceHandlers(final ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
 	}
-	
-	
-	
 }
