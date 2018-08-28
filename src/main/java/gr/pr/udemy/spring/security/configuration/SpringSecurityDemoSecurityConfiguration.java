@@ -26,11 +26,12 @@ public class SpringSecurityDemoSecurityConfiguration extends WebSecurityConfigur
 		UserBuilder users = User.withDefaultPasswordEncoder();
 		
 		auth.inMemoryAuthentication()
-				.withUser(users.username("PR").password("test123").roles("USER","OVERLORD","Awesome"))
-				.withUser(users.username("McCoy").password("test123").roles("USER","PLEB"))
-				.withUser(users.username("Angel").password("test123").roles("USER","CRUSADER","Awesome"));
+				.withUser(users.username("PR").password("test123").Role("USER","OVERLORD","Awesome"))
+				.withUser(users.username("McCoy").password("test123").Role("USER","PLEB"))
+				.withUser(users.username("Angel").password("test123").Role("USER","CRUSADER","Awesome"));
 */
-		auth.jdbcAuthentication().dataSource(securityDataSource);
+		auth.jdbcAuthentication().dataSource(securityDataSource)
+				.usersByUsernameQuery("select username,password, enabled from users_normalized where username=?");
 	}
 	
 	// TODO : fix redirect when not logged in

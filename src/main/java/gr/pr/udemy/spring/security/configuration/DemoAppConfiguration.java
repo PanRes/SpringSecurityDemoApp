@@ -7,14 +7,20 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 @Configuration
@@ -68,6 +74,36 @@ public class DemoAppConfiguration extends WebMvcConfigurationSupport {
 		securityDataSource.setMaxIdleTime(getIntProperty("connection.pool.maxIdleTime"));
 		
 		return securityDataSource;
+	}
+	
+	@Bean
+	public LocalSessionFactoryBean sessionFactory() {
+		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+		
+		sessionFactory.setDataSource(securityDataSource());
+		sessionFactory.setPackagesToScan(new String[] {"gr.pr.udemy.spring.security"});
+		
+		Properties hibernateProperties = new Properties();
+		
+		hibernateProperties.setProperty("hibernate.dialect", environment.getProperty("hibernate.dialect"));
+		hibernateProperties.setProperty("hibernate.dialect", environment.getProperty("hibernate.dialect"));
+		
+		sessionFactory.setHibernateProperties(hibernateProperties);
+		
+		return sessionFactory;
+	}
+	
+	@Bean
+	public PlatformTransactionManager transactionManager(EntityManagerFactory emf){
+		JpaTransactionManager transactionManager = new JpaTransactionManager();
+		transactionManager.setEntityManagerFactory(emf);
+
+		return transactionManager;
+	}
+	
+	@Bean
+	public PersistenceExceptionTranslationPostProcessor exceptionTranslation(){
+		return new PersistenceExceptionTranslationPostProcessor();
 	}
 	
 	private int getIntProperty(String propertyName) {
