@@ -13,7 +13,7 @@ public class Role {
 	private int id;
 	
 	@Basic
-	@Column(name = "role_name", nullable = false, unique = true, length = 20)
+	@Column(name = "role", nullable = false, unique = true, length = 20)
 	private String roleName;
 	
 	@ManyToMany(fetch = FetchType.LAZY)

@@ -1,5 +1,7 @@
 package gr.pr.udemy.spring.security.configuration;
 
+import gr.pr.udemy.spring.security.enitity.Role;
+import gr.pr.udemy.spring.security.enitity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -9,6 +11,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -19,6 +22,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableWebMvc
+@EnableTransactionManagement
 @ComponentScan(basePackages = "gr.pr.udemy.spring.security")
 @PropertySource("classpath:persistence-mysql.properties")
 public class DemoAppConfiguration extends WebMvcConfigurationSupport {
@@ -41,7 +45,7 @@ public class DemoAppConfiguration extends WebMvcConfigurationSupport {
 	public LocalSessionFactoryBean getSessionFactory() {
 		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
 		
-		sessionFactory.setPackagesToScan(new String[] {"gr.pr.udemy.spring.security"});
+		sessionFactory.setAnnotatedClasses(UserEntity.class, Role.class);
 		sessionFactory.setAnnotatedPackages("gr.pr.udemy.spring.security");
 		
 		Properties hibernateProperties = new Properties();

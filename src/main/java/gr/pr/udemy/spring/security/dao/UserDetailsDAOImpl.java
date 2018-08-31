@@ -1,22 +1,24 @@
 package gr.pr.udemy.spring.security.dao;
 
 import gr.pr.udemy.spring.security.enitity.UserEntity;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
 import java.util.List;
 
-@Repository
+@Component
 public class UserDetailsDAOImpl implements UserDetailsDAO {
 	
 	@Autowired
-	private static SessionFactory sessionFactory;
+	private SessionFactory sessionFactory;
 	
 	public List<UserEntity> getAllUsers() {
-		Session session = UserDetailsDAOImpl.sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession();
 		
 		TypedQuery<UserEntity> query = session.createNamedQuery("User.findAll", UserEntity.class);
 		
@@ -27,7 +29,7 @@ public class UserDetailsDAOImpl implements UserDetailsDAO {
 	}
 
 	public UserEntity getUserByUserName(String userName) {
-		Session session = UserDetailsDAOImpl.sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession();
 		
 		TypedQuery<UserEntity> query = session.createNamedQuery("User.findUserByUserName", UserEntity.class).setParameter("userName", userName);
 

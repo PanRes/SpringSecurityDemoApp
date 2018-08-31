@@ -6,8 +6,8 @@ import java.util.List;
 @Entity
 @Table(name = "users_normalized")
 @NamedQueries({
-		@NamedQuery(name = "User.findAll", query = "SELECT u FROM UserEntity u"),
-		@NamedQuery(name = "User.findUserByUserName", query = "SELECT u FROM UserEntity u where u.userName = :userName"),
+		@NamedQuery(name = "User.findAll", query = "FROM UserEntity u"),
+		@NamedQuery(name = "User.findUserByUserName", query = "FROM UserEntity u where u.userName = :userName"),
 })
 public class UserEntity {
 	
@@ -17,11 +17,11 @@ public class UserEntity {
 	private int id;
 	
 	@Basic
-	@Column(name = "user_name",unique = true,nullable = true,length = 20)
+	@Column(name = "user_name",unique = true,nullable = false,length = 20)
 	private String userName;
 	
 	@Basic
-	@Column(name = "password", nullable = false,length = 20)
+	@Column(name = "password", nullable = false,length = 70)
 	private String password;
 	
 	@Basic
