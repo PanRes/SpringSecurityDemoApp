@@ -1,6 +1,5 @@
 package gr.pr.udemy.spring.security.configuration;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -8,20 +7,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
-import java.beans.PropertyVetoException;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 @Configuration
 @EnableWebMvc
@@ -31,8 +25,6 @@ public class DemoAppConfiguration extends WebMvcConfigurationSupport {
 	
 	@Autowired
 	private Environment environment;
-	
-	private Logger logger = Logger.getLogger(getClass().getName());
 	
 	@Bean
 	public ViewResolver viewResolver() {
@@ -44,49 +36,29 @@ public class DemoAppConfiguration extends WebMvcConfigurationSupport {
 		return viewResolver;
 	}
 	
-	// TODO : fix problem when retrieving data from db + create custom tables and beans
-	@Bean
-	public DataSource securityDataSource() {
-		
-		//Create connection pool
-		ComboPooledDataSource securityDataSource = new ComboPooledDataSource();
-		
-		//set jdbc Driver
-		try {
-			securityDataSource.setDriverClass(environment.getProperty("jdbc.driver"));
-		} catch (PropertyVetoException e) {
-			throw new RuntimeException(e);
-		}
-		
-		//log connection properties
-		logger.info(">>> jdbc.url= " + environment.getProperty("jdbc.url"));
-		logger.info(">>> jdbc.user= " + environment.getProperty("jdbc.user"));
-		
-		//Set database connection properties
-		securityDataSource.setJdbcUrl(environment.getProperty("jdbc.user"));
-		securityDataSource.setUser(environment.getProperty("jdbc.user"));
-		securityDataSource.setPassword(environment.getProperty("jdbc.password"));
-		
-		//set connection pool properties
-		securityDataSource.setInitialPoolSize(getIntProperty("connection.pool.initialPoolSize"));
-		securityDataSource.setMinPoolSize(getIntProperty("connection.pool.minPoolSize"));
-		securityDataSource.setMaxPoolSize(getIntProperty("connection.pool.maxPoolSize"));
-		securityDataSource.setMaxIdleTime(getIntProperty("connection.pool.maxIdleTime"));
-		
-		return securityDataSource;
-	}
 	
 	@Bean
-	public LocalSessionFactoryBean sessionFactory() {
+	public LocalSessionFactoryBean getSessionFactory() {
 		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
 		
-		sessionFactory.setDataSource(securityDataSource());
 		sessionFactory.setPackagesToScan(new String[] {"gr.pr.udemy.spring.security"});
+		sessionFactory.setAnnotatedPackages("gr.pr.udemy.spring.security");
 		
 		Properties hibernateProperties = new Properties();
 		
+		hibernateProperties.setProperty("hibernate.connection.driver_class",environment.getProperty("jdbc.driver"));
+		hibernateProperties.setProperty("hibernate.connection.url",environment.getProperty("jdbc.url"));
+		hibernateProperties.setProperty("hibernate.connection.user",environment.getProperty("jdbc.user"));
+		hibernateProperties.setProperty("hibernate.connection.password",environment.getProperty("jdbc.password"));
+		
 		hibernateProperties.setProperty("hibernate.dialect", environment.getProperty("hibernate.dialect"));
-		hibernateProperties.setProperty("hibernate.dialect", environment.getProperty("hibernate.dialect"));
+		hibernateProperties.setProperty("hibernate.show_sql",environment.getProperty("hibernate.show_sql"));
+		
+		hibernateProperties.setProperty("hibernate.c3p0.min_size",environment.getProperty("hibernate.c3p0.min_size"));
+		hibernateProperties.setProperty("hibernate.c3p0.max_size",environment.getProperty("hibernate.c3p0.max_size"));
+		hibernateProperties.setProperty("hibernate.c3p0.timeout",environment.getProperty("hibernate.c3p0.timeout"));
+		hibernateProperties.setProperty("hibernate.c3p0.max_statements",environment.getProperty("hibernate.c3p0.max_statements"));
+		
 		
 		sessionFactory.setHibernateProperties(hibernateProperties);
 		
@@ -94,9 +66,9 @@ public class DemoAppConfiguration extends WebMvcConfigurationSupport {
 	}
 	
 	@Bean
-	public PlatformTransactionManager transactionManager(EntityManagerFactory emf){
-		JpaTransactionManager transactionManager = new JpaTransactionManager();
-		transactionManager.setEntityManagerFactory(emf);
+	public HibernateTransactionManager transactionManager(){
+		HibernateTransactionManager transactionManager = new HibernateTransactionManager();
+		transactionManager.setSessionFactory(getSessionFactory().getObject());
 
 		return transactionManager;
 	}
@@ -104,14 +76,6 @@ public class DemoAppConfiguration extends WebMvcConfigurationSupport {
 	@Bean
 	public PersistenceExceptionTranslationPostProcessor exceptionTranslation(){
 		return new PersistenceExceptionTranslationPostProcessor();
-	}
-	
-	private int getIntProperty(String propertyName) {
-		String propertyValue = environment.getProperty(propertyName);
-		
-		int intPropertyValue = Integer.parseInt(propertyValue);
-		
-		return intPropertyValue;
 	}
 	
 	@Override

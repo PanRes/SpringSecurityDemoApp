@@ -6,39 +6,35 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.User.UserBuilder;
-
-import javax.sql.DataSource;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityDemoSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
-	private DataSource securityDataSource;
+	private UserDetailsService userDetailsService;
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		
 		
 /*
-		UserBuilder users = User.withDefaultPasswordEncoder();
+		UserBuilder users = UserEntity.withDefaultPasswordEncoder();
 		
 		auth.inMemoryAuthentication()
 				.withUser(users.username("PR").password("test123").Role("USER","OVERLORD","Awesome"))
 				.withUser(users.username("McCoy").password("test123").Role("USER","PLEB"))
 				.withUser(users.username("Angel").password("test123").Role("USER","CRUSADER","Awesome"));
 */
-		auth.jdbcAuthentication().dataSource(securityDataSource)
-				.usersByUsernameQuery("select username,password, enabled from users_normalized where username=?");
+		auth.userDetailsService(userDetailsService);
 	}
 	
 	// TODO : fix redirect when not logged in
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-				.antMatchers("/").permitAll()
+				.antMatchers("/").authenticated()
 				.antMatchers("/overLords/**").hasRole("OVERLORD")
 				.antMatchers("/plebs/**").hasRole("PLEB")
 				.antMatchers("/castle/**").hasRole("Awesome")

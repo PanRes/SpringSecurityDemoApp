@@ -1,16 +1,15 @@
 package gr.pr.udemy.spring.security.enitity;
 
 import javax.persistence.*;
-import java.lang.invoke.SerializedLambda;
 import java.util.List;
 
 @Entity
 @Table(name = "users_normalized")
 @NamedQueries({
-		@NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
-		@NamedQuery(name = "User.findUserByUserName", query = "SELECT u FROM User u where u.userName = :userName"),
+		@NamedQuery(name = "User.findAll", query = "SELECT u FROM UserEntity u"),
+		@NamedQuery(name = "User.findUserByUserName", query = "SELECT u FROM UserEntity u where u.userName = :userName"),
 })
-public class User {
+public class UserEntity {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,10 +36,10 @@ public class User {
 	)
 	private List<Role> roles;
 	
-	public User() {
+	public UserEntity() {
 	}
 	
-	public User(String userName, String password) {
+	public UserEntity(String userName, String password) {
 		this.userName = userName;
 		this.password = password;
 	}
@@ -94,7 +93,7 @@ public class User {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		
-		User user = (User) o;
+		UserEntity user = (UserEntity) o;
 		
 		if (getId() != user.getId()) return false;
 		if (isEnabled() != user.isEnabled()) return false;

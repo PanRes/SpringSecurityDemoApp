@@ -22,7 +22,7 @@ public class Role {
 			joinColumns = {@JoinColumn(name = "role_id")},
 			inverseJoinColumns = {@JoinColumn(name = "user_id")}
 	)
-	private List<User> users;
+	private List<UserEntity> users;
 	
 	public Role() {
 	}
@@ -47,15 +47,15 @@ public class Role {
 		this.roleName = roleName;
 	}
 	
-	public List<User> getUsers() {
+	public List<UserEntity> getUsers() {
 		return users;
 	}
 	
-	public void addUser(User user) {
+	public void addUser(UserEntity user) {
 		this.users.add(user);
 	}
 	
-	public void addUsers(List<User> users) {
+	public void addUsers(List<UserEntity> users) {
 		this.users.addAll(users);
 	}
 	
